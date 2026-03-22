@@ -13,7 +13,7 @@ const links = [
   { label: 'Orders', path: '/orders' },
   { label: 'Payments', path: '/payments' },
   { label: 'Recommendations', path: '/recommendations' },
-  { label: 'Admin', path: '/admin' },
+  { label: 'Admin', path: '/admin', adminOnly: true },
 ]
 
 const DashboardLayout = () => {
@@ -53,7 +53,9 @@ const DashboardLayout = () => {
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8">
         <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <nav className="grid gap-1">
-            {links.map((link) => (
+            {links
+              .filter((link) => !link.adminOnly || user?.role === 'admin')
+              .map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
@@ -66,7 +68,7 @@ const DashboardLayout = () => {
               >
                 {link.label}
               </NavLink>
-            ))}
+              ))}
           </nav>
         </aside>
 

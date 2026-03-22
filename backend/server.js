@@ -8,6 +8,7 @@ const morgan     = require('morgan')
 const cookieParser = require('cookie-parser')
 const { connectDB, getMongoStatus } = require('./src/config/db')
 const authRoutes = require('./src/routes/auth.routes')
+const adminRoutes = require('./src/routes/admin.routes')
 
 const app = express()
 
@@ -36,6 +37,16 @@ app.use('/api/auth', (req, res, next) => {
   }
   next()
 }, authRoutes)
+
+app.use('/api/admin', (req, res, next) => {
+  if (!getMongoStatus().connected) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database unavailable. Check MONGO_URI and Atlas IP access list.',
+    })
+  }
+  return next()
+}, adminRoutes)
 
 // Global error handler
 app.use((err, _req, res, _next) => {
