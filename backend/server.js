@@ -9,11 +9,16 @@ const cookieParser = require('cookie-parser')
 const { connectDB, getMongoStatus } = require('./src/config/db')
 const authRoutes = require('./src/routes/auth.routes')
 const adminRoutes = require('./src/routes/admin.routes')
+const orderRoutes = require('./src/routes/order.routes')
+const mealRoutes = require('./src/routes/meal.routes')
 
 const app = express()
 
 app.use(helmet())
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+  credentials: true
+}))
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cookieParser())
@@ -47,6 +52,26 @@ app.use('/api/admin', (req, res, next) => {
   }
   return next()
 }, adminRoutes)
+
+app.use('/api/orders', (req, res, next) => {
+  if (!getMongoStatus().connected) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database unavailable. Check MONGO_URI and Atlas IP access list.',
+    })
+  }
+  return next()
+}, orderRoutes)
+
+app.use('/api/meals', (req, res, next) => {
+  if (!getMongoStatus().connected) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database unavailable. Check MONGO_URI and Atlas IP access list.',
+    })
+  }
+  return next()
+}, mealRoutes)
 
 // Global error handler
 app.use((err, _req, res, _next) => {
