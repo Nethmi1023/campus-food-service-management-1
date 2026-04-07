@@ -108,6 +108,46 @@ exports.createOrder = async (req, res) => {
   }
 }
 
+// Delete order (admin only)
+exports.deleteOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found' })
+
+    // Restore stock if not already cancelled
+    if (order.status !== 'cancelled') {
+      for (const item of order.items) {
+        await Meal.findByIdAndUpdate(item.mealId, { $inc: { stock: item.quantity } })
+      }
+    }
+
+    await Order.findByIdAndDelete(req.params.id)
+    res.json({ success: true, message: 'Order deleted successfully' })
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to delete order', error: error.message })
+  }
+}
+
+// Get ALL orders (admin only)
+exports.getAllOrders = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 50 } = req.query
+    const query = {}
+    if (status) query.status = status
+
+    const orders = await Order.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .populate('user', 'name email')
+      .populate('items.mealId', 'name price')
+
+    res.json({ success: true, data: orders })
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch orders', error: error.message })
+  }
+}
+
 // Get all orders for a user
 exports.getUserOrders = async (req, res) => {
   try {

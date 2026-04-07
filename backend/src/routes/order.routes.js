@@ -41,9 +41,15 @@ router.patch(
 
 // Admin routes
 router.get(
+  '/all',
+  authorizeRoles('admin'),
+  orderController.getAllOrders
+)
+
+router.get(
   '/',
   authorizeRoles('admin'),
-  orderController.getUserOrders // Admin can see all orders
+  orderController.getUserOrders
 )
 
 router.patch(
@@ -57,6 +63,12 @@ router.get(
   '/stats/overview',
   authorizeRoles('admin'),
   orderController.getOrderStats
+)
+
+router.delete(
+  '/:id',
+  authorizeRoles('admin'),
+  orderController.deleteOrder
 )
 
 module.exports = router

@@ -14,6 +14,7 @@ import OrdersPage from './pages/student/OrdersPage'
 import PaymentsPage from './pages/student/PaymentsPage'
 import RecommendationsPage from './pages/student/RecommendationsPage'
 import AdminHomePage from './pages/admin/AdminHomePage'
+import AdminOrdersPage from './pages/admin/AdminOrdersPage'
 import ProtectedRoute from './routes/ProtectedRoute'
 import PublicOnlyRoute from './routes/PublicOnlyRoute'
 import RoleRoute from './routes/RoleRoute'
@@ -48,6 +49,14 @@ function App() {
               element={(
                 <RoleRoute roles={['admin']}>
                   <AdminHomePage />
+                </RoleRoute>
+              )}
+            />
+            <Route
+              path="admin/orders"
+              element={(
+                <RoleRoute roles={['admin']}>
+                  <AdminOrdersPage />
                 </RoleRoute>
               )}
             />

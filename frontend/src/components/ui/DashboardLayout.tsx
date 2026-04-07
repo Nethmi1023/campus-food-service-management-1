@@ -14,6 +14,7 @@ const links = [
   { label: 'Payments', path: '/payments' },
   { label: 'Recommendations', path: '/recommendations' },
   { label: 'Admin', path: '/admin', adminOnly: true },
+  { label: 'Admin Orders', path: '/admin/orders', adminOnly: true },
 ]
 
 const DashboardLayout = () => {
