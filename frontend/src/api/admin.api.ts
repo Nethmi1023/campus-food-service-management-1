@@ -19,3 +19,4 @@ interface AdminDashboardResponse {
 }
 
 export const getAdminDashboard = () => api.get<AdminDashboardResponse>('/admin/dashboard')
+export const getAllOrders = () => api.get('/admin/orders')
